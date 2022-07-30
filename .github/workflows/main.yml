@@ -1,4 +1,11 @@
 name: Build Arch Linux Package
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
 description: Build Archlinux / Manjaro package with Docker, auto resolve AUR dependencies, for AMD64 or ARM64
 branding:
   icon: package
