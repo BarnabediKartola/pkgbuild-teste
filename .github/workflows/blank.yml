@@ -37,7 +37,7 @@ jobs:
           # Relative path to directory containing the PKGBUILD file.
           pkgdir: # optional, default is .
           # Support AUR dependencies if nonempty.
-          aurDeps: git # optional, default is 
+          aurDeps: # optional, default is 
           # Disable namcap checks if nonempty.
           namcapDisable: # optional, default is 
           # A comma-separated list of rules for namcap to run.
