@@ -23,7 +23,7 @@ build() {
 package() {
   echo $PWD
   ls -la
-  cd ${_pkgname}
+#   cd ${_pkgname}
 
   make INSTALL_ROOT=${pkgdir} install
   install -Dm644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
