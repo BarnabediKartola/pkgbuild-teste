@@ -14,11 +14,7 @@ makedepends=('qt5-tools')
 #sha256sums=(SKIP)
 
 build() {
-  echo $PWD
-  ls -la
-  echo ${pkgdir}
-  cp ${_pkgname} src/
-  cd ${_pkgname}
+  cp -r ../${_pkgname}/* .
   qmake mystiq.pro
   make 
   strip mystiq
