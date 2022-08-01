@@ -14,23 +14,23 @@ makedepends=('qt5-tools')
 #sha256sums=(SKIP)
 
 build() {
-  cd ..
+#   cd ..
   echo $PWD
   ls -la
   cd ${_pkgname}
-  echo $PWD
-  ls -la
   qmake mystiq.pro
   make 
   strip mystiq
 }
 
 package() {
-   cd ${_pkgname}
+  echo $PWD
+  ls -la
+  cd ${_pkgname}
 
-   make INSTALL_ROOT=${pkgdir} install
-   install -Dm644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
-   echo '[Desktop Entry]
+  make INSTALL_ROOT=${pkgdir} install
+  install -Dm644 LICENSE ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
+  echo '[Desktop Entry]
 Categories=AudioVideo;AudioVideoEditing;
 Exec=mystiq %U
 Icon=mystiq
