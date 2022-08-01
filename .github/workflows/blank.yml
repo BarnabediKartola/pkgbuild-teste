@@ -38,7 +38,7 @@ jobs:
       - name: Build Arch Linux Package
       # You may pin to the exact commit or the version.
       # uses: Menci/build-archlinux-package@2bf49233cc85786df75aa750e1d6c994e534395d
-        uses: Menci/build-archlinux-package@beta-v1
+        uses: Menci/build-archlinux-package@beta-v2
         with:
           # The Docker Image used to build the packages. Recommended are "menci/aur-builder-archlinux:latest", "menci/aur-builder-manjaro:latest".
           docker-image: # optional, default is menci/aur-builder-archlinux:latest
