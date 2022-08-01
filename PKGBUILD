@@ -15,6 +15,7 @@ license=('GPL3')
 
 build() {
   ls -la
+  echo $PWD
   cd ${_pkgname}
   qmake mystiq.pro
   make 
