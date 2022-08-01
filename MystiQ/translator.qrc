@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/mystiq_es.qm</file>
+        <file>translations/mystiq_de.qm</file>
+        <file>translations/mystiq_fr.qm</file>
+        <file>translations/mystiq_it.qm</file>
+        <file>translations/mystiq_sv.qm</file>
+        <file>translations/mystiq_ja.qm</file>
+        <file>translations/mystiq_pt.qm</file>
+        <file>translations/mystiq_ru.qm</file>
+        <file>translations/mystiq_pl.qm</file>
+        <file>translations/mystiq_ar.qm</file>
+        <file>translations/mystiq_cs_CZ.qm</file>
+        <file>translations/mystiq_hu.qm</file>
+        <file>translations/mystiq_ro.qm</file>
+        <file>translations/mystiq_zh_CN.qm</file>
+        <file>translations/mystiq_vi.qm</file>
+        <file>translations/mystiq_tr.qm</file>
+        <file>translations/mystiq_ru_RU.qm</file>
+        <file>translations/mystiq_gl.qm</file>
+        <file>translations/mystiq_id.qm</file>
+    </qresource>
+</RCC>
