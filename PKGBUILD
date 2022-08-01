@@ -8,8 +8,8 @@ pkgdesc="FFmpeg GUI front-end based on Qt5."
 arch=('x86_64')
 url="https://github.com/swl-x/MystiQ/"
 license=('GPL3')
-#depends=('qt5-declarative' 'qt5-multimedia' 'ffmpeg' 'libnotify' 'sox')
-#makedepends=('qt5-tools')
+depends=('qt5-declarative' 'qt5-multimedia' 'ffmpeg' 'libnotify' 'sox')
+makedepends=('qt5-tools')
 #source=("git+https://github.com/biglinux/MystiQ.git")
 #sha256sums=(SKIP)
 
