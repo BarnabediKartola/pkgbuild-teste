@@ -53,8 +53,8 @@ jobs:
           # Don't check if the existence of the target package even if `repo-url` option is specfied.
           force-rebuild: # optional, default is false
           # The target directory (on GitHub Action runner) to put the built package files to.
-          target-directory: 
+          target-directory: build
           # The value of "Packager" field of built package.
           packager: # optional, default is https://github.com/Menci/build-aur-package
           # The file path to save the build log.
-          build-log-file: # optional, default is /dev/null
+          build-log-file: teste.log # optional, default is /dev/null
