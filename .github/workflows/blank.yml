@@ -45,7 +45,7 @@ jobs:
           # The platform (architecture) to build. Possible values are "linux/amd64" and "linux/arm64".
           platform: # optional, default is linux/amd64
           # The directory containing PKGBUILD and other files required.
-          pkgbuild-directory: 
+          pkgbuild-directory: pkgbuild1
           # Extra build dependencies to install before building.
           extra-build-dependencies: # optional, default is 
           # Your repo's URL. If specfied, the existence of the target package (with target version) will be tested by HEADing the URL <repo-url>/<package-file>.
