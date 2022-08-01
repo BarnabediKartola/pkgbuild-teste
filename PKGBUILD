@@ -15,9 +15,11 @@ makedepends=('qt5-tools')
 
 build() {
   cd ..
-  ls -la
   echo $PWD
+  ls -la
   cd ${_pkgname}
+  echo $PWD
+  ls -la
   qmake mystiq.pro
   make 
   strip mystiq
