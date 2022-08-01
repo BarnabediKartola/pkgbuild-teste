@@ -14,6 +14,7 @@ license=('GPL3')
 #sha256sums=(SKIP)
 
 build() {
+  cd ..
   ls -la
   echo $PWD
   cd ${_pkgname}
