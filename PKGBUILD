@@ -14,6 +14,7 @@ license=('GPL3')
 #sha256sums=(SKIP)
 
 build() {
+  ls -la
   cd ${_pkgname}
   qmake mystiq.pro
   make 
