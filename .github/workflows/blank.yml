@@ -45,24 +45,34 @@ jobs:
           # A comma-separated list of rules for namcap not to run.
           namcapExcludeRules: # optional, default is 
           # Additional arguments to pass to makepkg.
-          makepkgArgs: # optional, default is 
-    
-      - id: upload-prepare
-        shell: bash -O extglob {0}
+          makepkgArgs: # optional, default is
+          
+      - name: Print Package Files
         run: |
-          echo "## ssh setup"
-          mkdir -p /home/runner/.ssh
-          touch /home/runner/.ssh/github_actions
-          chmod 600 /home/runner/.ssh/github_actions
-          ssh-agent -a /tmp/ssh_agent.sock > /dev/null
-          echo "::set-output name=upload-files::./${{ steps.makepkg.outputs.pkgfile0 }}"
+          echo "Successfully created the following package archive"
+          echo "Package: ${{ steps.makepkg.outputs.pkgfile0 }}"
+          
+      - name: Upload Package Archive
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ steps.makepkg.outputs.pkgfile0 }}
     
-      - id: upload-github-release
-        shell: bash -O extglob {0}
-        run: |
-          echo "## github upload"
-          echo ${{ github.token }} | gh auth login --with-token
-          gh release create ${{ steps.makepkg.outputs.pkgfile0 }} --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
-          GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.makepkg.outputs.pkgfile0 }}
-          gh release upload ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --clobber \
-            ${{ steps.upload-prepare.outputs.upload-files }}
+      #- id: upload-prepare
+        #shell: bash -O extglob {0}
+        #run: |
+          #echo "## ssh setup"
+          #mkdir -p /home/runner/.ssh
+          #touch /home/runner/.ssh/github_actions
+          #chmod 600 /home/runner/.ssh/github_actions
+          #ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+          #echo "::set-output name=upload-files::./${{ steps.makepkg.outputs.pkgfile0 }}"
+    
+      #- id: upload-github-release
+        #shell: bash -O extglob {0}
+        #run: |
+          #echo "## github upload"
+          #echo ${{ github.token }} | gh auth login --with-token
+          #gh release create ${{ steps.makepkg.outputs.pkgfile0 }} --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
+          #GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.makepkg.outputs.pkgfile0 }}
+          #gh release upload ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --clobber \
+            #${{ steps.upload-prepare.outputs.upload-files }}
