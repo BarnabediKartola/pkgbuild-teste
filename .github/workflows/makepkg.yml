@@ -3,7 +3,13 @@
 name: Makepkg
 
 # Controls when the workflow will run
-on: [push, pull_request]
+on: 
+  push:
+    #branches: [ "main" ]
+    branches: [ "master" ]
+  pull_request:
+    #branches: [ "main" ]
+    branches: [ "master" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -65,9 +71,12 @@ jobs:
         run: |
           echo "## github upload"
           echo ${{ github.token }} | gh auth login --with-token
-          gh release create ${{ steps.makepkg.outputs.pkgfile0 }} --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
-          GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.makepkg.outputs.pkgfile0 }}
-          gh release upload ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --clobber \
+          pkgname=$(echo ${{ steps.makepkg.outputs.pkgfile0 }} | cut -d "/" -f2)
+          echo "Create"
+          gh release create $pkgname --title $pkgname --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
+          echo "Upload"
+          GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/$pkgname
+          gh release upload $pkgname --repo ${{ github.repository }} --clobber \
             ${{ steps.upload-prepare.outputs.upload-files }}
 
 #      - name: upload-cdn77
