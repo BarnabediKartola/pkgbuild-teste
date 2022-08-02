@@ -30,6 +30,7 @@ jobs:
         run: echo Hello, world!
 
       - name: Makepkg Build and Check
+        id: makepkg
         # You may pin to the exact commit or the version.
         # uses: edlanglois/pkgbuild-action@5bb737e69e6a5a171327e6bcf8adace04814685c
         uses: edlanglois/pkgbuild-action@v1.1.7
