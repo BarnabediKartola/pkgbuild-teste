@@ -12,193 +12,82 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    name: 'Manjaro Package Action'
-    description: 'Builds Manjaro Packages'
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Makepkg Build and Check
+        id: makepkg
+        # You may pin to the exact commit or the version.
+        # uses: edlanglois/pkgbuild-action@5bb737e69e6a5a171327e6bcf8adace04814685c
+        uses: manjaro/manjaro-pkg-action
+        #with:
+          ## Relative path to directory containing the PKGBUILD file.
+          #pkgdir: .github # optional, default is .
+          ## Support AUR dependencies if nonempty.
+          #aurDeps: # optional, default is 
+          ## Disable namcap checks if nonempty.
+          #namcapDisable: # optional, default is 
+          ## A comma-separated list of rules for namcap to run.
+          #namcapRules: # optional, default is 
+          ## A comma-separated list of rules for namcap not to run.
+          #namcapExcludeRules: # optional, default is 
+          ## Additional arguments to pass to makepkg.
+          #makepkgArgs: # optional, default is
+          
+      #- name: Print Package Files
+        #run: |
+          #echo "Successfully created the following package archive"
+          #echo "Package: ${{ steps.makepkg.outputs.pkgfile0 }}"
+          
+      # Uncomment to upload the package as an artifact    
+      #- name: Upload Package Archive
+        #uses: actions/upload-artifact@v2
+        #with:
+          #path: ${{ steps.makepkg.outputs.pkgfile0 }}
     
-    inputs:
-      package:
-        description: 'PKGBUILD repo name'
-        required: true
-      source:
-        description: 'custom package repo source'
-        required: false
-      branch:
-        description: 'branch to build against'
-        default: stable
-        required: false
-      custom-repo:
-        description: 'custom repo'
-        required: false
-      multilib:
-        description: 'build multilib package'
-        required: false
-        default: false
-      repo:
-        description: 'package repo'
-        required: true
-      gpg-key:
-        descriptio: 'gpg signing key'
-        required: true
-      gpg-passphrase:
-        description: 'gpg passphrase'
-        required: true
-      boxit-host:
-        description: 'boxit host'
-        required: false
-      boxit-target:
-        description: 'boxit rsync target'
-        required: false
-      ssh-key:
-        description: 'boxit user ssh private key'
-        required: false
+      #- id: upload-prepare
+        #shell: bash -O extglob {0}
+        #run: |
+          #echo "## ssh setup"
+          #mkdir -p /home/runner/.ssh
+          #touch /home/runner/.ssh/github_actions
+          #chmod 600 /home/runner/.ssh/github_actions
+          #ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+          #echo "::set-output name=upload-files::./${{ steps.makepkg.outputs.pkgfile0 }}"
     
-    runs:
-      using: "composite"
-      steps:
-        - name: install build-dependencies
-          shell: bash
-          run: |
-            sudo apt-get update
-            sudo apt-get install \
-            build-essential \
-            cmake \
-            fakeroot \
-            git \
-            libarchive-dev \
-            libarchive-tools \
-            libcurl4-openssl-dev \
-            libgpgme-dev \
-            libssl-dev \
-            zip \
-            python3-pip
-            sudo pip3 install meson
-            sudo pip3 install ninja
-        - name: install pacman
-          shell: bash
-          env:
-            PACMAN_VERSION: 6.0.1
-          run: |
-            sudo git clone --depth 1 https://gitlab.manjaro.org/packages/core/pacman.git
-            pushd pacman
-            sudo wget https://sources.archlinux.org/other/pacman/pacman-${PACMAN_VERSION}.tar.xz
-            sudo tar -xvf pacman-${PACMAN_VERSION}.tar.xz
-            pushd pacman-${PACMAN_VERSION}
-            sudo patch -p1 -i ../pacman-sync-first-option.patch
-            sudo meson --prefix=/usr \
-                        --buildtype=plain \
-                        -Ddoc=disabled \
-                        -Ddoxygen=enabled \
-                        -Dscriptlet-shell=/usr/bin/bash \
-                        -Dldconfig=/usr/bin/ldconfig \
-                        build
-            sudo meson compile -C build
-            sudo meson install -C build
-            popd
-            sudo install -m644 pacman.conf /etc/pacman.conf
-            sudo install -m644 makepkg.conf /etc/
-            sudo mkdir -p /etc/pacman.d
-            sudo touch /etc/pacman.d/mirrorlist
-            popd
-            sudo rm -rf pacman
-        - name: install keyrings
-          shell: bash
-          run: |
-            sudo install -dm755 /usr/share/pacman/keyrings/
-            sudo git clone --depth 1 https://gitlab.manjaro.org/packages/core/manjaro-keyring.git
-            pushd manjaro-keyring
-              sudo install -m0644 manjaro.gpg /usr/share/pacman/keyrings/
-              sudo install -m0644 manjaro-trusted /usr/share/pacman/keyrings/
-              sudo install -m0644 manjaro-trusted /usr/share/pacman/keyrings/
-            popd
-            sudo rm -rf manjaro-keyring
-            mkdir -p archlinux-keyring
-            pushd archlinux-keyring
-              wget https://archlinux.org/packages/core/any/archlinux-keyring/download -O /tmp/archlinux-keyring.tar.zst
-              tar --use-compress-program=unzstd --strip-components=4 --wildcards -xvf /tmp/archlinux-keyring.tar.zst usr/share/pacman/keyrings/*
-              sudo install -m0644 archlinux.gpg /usr/share/pacman/keyrings/
-              sudo install -m0644 archlinux-trusted /usr/share/pacman/keyrings/
-              sudo install -m0644 archlinux-revoked /usr/share/pacman/keyrings/
-            popd
-            sudo rm -rf archlinux-keyring
-            sudo pacman-key --init
-            sudo pacman-key --populate archlinux manjaro
-        - name: install manjaro-chrootbuild
-          shell: bash
-          run: |
-            sudo git clone --depth 1 https://gitlab.manjaro.org/tools/development-tools/manjaro-chrootbuild
-            pushd manjaro-chrootbuild
-            sudo ./install.sh
-            echo "PACKAGER = Manjaro Build Server <build@manjaro.org>" | sudo tee -a /etc/makepkg.conf > /dev/null
-            popd
-            sudo rm -rf manjaro-chrootbuild
-        - name: clone package repo
-          shell: bash
-          run: |
-            if [[ ! -z "${{ inputs.source }}" ]]; then
-              source=${{ inputs.source }}
-            else
-              source=https://gitlab.manjaro.org/packages/${{ inputs.repo }}/${{ inputs.package }}.git
-            fi
-            sudo git clone ${source}
-        - name: build package
-          shell: bash
-          run: |
-            build_opt=("-p ${{ inputs.package }}" "-b ${{ inputs.branch }}")
-            [[ ! -z "${{ inputs.custom-repo }}" ]] && build_opt+=("-k ${{ inputs.custom-repo }}")
-            [[ "${{ inputs.multilib }}" == "true" ]] && build_opt+=("-m")
-            echo "cmd=chrootbuild ${build_opt[@]}"
-            sudo chrootbuild ${build_opt[@]}
-        - name: sign package
-          shell: bash -O extglob {0}
-          run: |      
-            cat <(echo -e "${{ inputs.gpg-key }}" | base64 --decode) | gpg --batch --import &>/dev/null
-            for p in $(find $PWD -maxdepth 1 -regex '.*\.pkg\.tar\.\(xz\|zst\)'); do
-              gpg --pinentry-mode loopback --passphrase "${{ inputs.gpg-passphrase }}" --detach-sign ${p}
-            done
-        - name: prepare assets transaction
-          shell: bash -O extglob {0}
-          run: |
-            source /var/lib/chrootbuild/build/${{ inputs.package }}/PKGBUILD
-            tag=${pkgver}-${pkgrel}
-            for p in ${pkgname[@]}; do
-              name=$(find . -name ${p}-${tag}*.zst)
-              arch=$(echo ${name} | rev | cut -d- -f1 | rev | cut -d. -f1)
-              file=${p}-${tag}-${arch}
-              btf=${file}.yml # boxit transaction file
-              echo "sha256_pkg: $(sha256sum ${name} | cut -d' ' -f1)" > ${btf}
-              echo "sha256_sig: $(sha256sum ${name}.sig | cut -d' ' -f1)" >> ${btf}
-              echo "repository: ${{ inputs.repo }}" >> ${btf}
-              echo "branch: ${{ inputs.branch }}" >> ${btf}
-              tar -czvf ${file}.tar ./${file}*.zst ./${file}*.sig ./${btf}
-            done
-            echo "TAG=${tag}" >>$GITHUB_ENV
-        - name: publish package
-          shell: bash -O extglob {0}
-          run: |
-            release=${{ inputs.package }}-${{ env.TAG }}
-            echo ${{ github.token }} | gh auth login --with-token
-            gh release create ${release} --title ${release} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
-            GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${release}
-            gh release upload ${release} --repo ${GITHUB_REPOSITORY} --clobber ./*.zst ./*.sig ./*.tar
-        - name: prepare upload
-          shell: bash
-          run: |
-            echo "## ssh setup"
-            mkdir -p /home/runner/.ssh
-            touch /home/runner/.ssh/github_actions
-            chmod 600 /home/runner/.ssh/github_actions
-            ssh-agent -a /tmp/ssh_agent.sock > /dev/null
-        - name: push to boxit
-          shell: bash -O extglob {0}
-          env:
-            SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          run: |
-            if [ -z "${{ inputs.boxit-host }}" ] || [ -z "${{ inputs.boxit-target }}" ] || [ -z "${{ inputs.ssh-key }}" ]; then 
-              echo "## not (all) credentials given for boxit push"
-              exit 0
-            fi
-            ssh-keyscan -t rsa ${{ inputs.boxit-host }} >> /home/runner/.ssh/known_hosts
-            echo "${{ inputs.ssh-key }}" >> /home/runner/.ssh/github_actions
-            ssh-add /home/runner/.ssh/github_actions
-            rsync -vaPzz --stats -e ssh ./*tar ${{ inputs.boxit-target }}
-    
+      #- id: upload-github-release
+        #shell: bash -O extglob {0}
+        #run: |
+          #echo "## github upload"
+          #echo ${{ github.token }} | gh auth login --with-token
+          #pkgname=$(echo ${{ steps.makepkg.outputs.pkgfile0 }} | cut -d "/" -f2)
+          #echo "Create"
+          #gh release create $pkgname --title $pkgname --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
+          #echo "Upload"
+          #GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/$pkgname
+          #gh release upload $pkgname --repo ${{ github.repository }} --clobber \
+            #${{ steps.upload-prepare.outputs.upload-files }}
+        
+        
+#      - name: upload-cdn77
+#        shell: bash -O extglob {0}
+#        run: |
+#          # if is not yet supported in composite https://github.com/actions/runner/blob/main/docs/adrs/0549-composite-run-steps.md#if-condition
+#          if [ -z "${{ inputs.cdn77-host }}" ] || [ -z "${{ inputs.cdn77-user }}" ] || [ -z "${{ inputs.cdn77-pwd }}" ]; then 
+#            echo "## not (all) credentials given for cdn77 upload"
+#            exit 0
+#          fi
+#          
+#          echo "## cdn77 upload"
+#          
+#          ssh-keyscan -t rsa ${{ inputs.cdn77-host }} >> /home/runner/.ssh/known_hosts
+#          ## create target dir
+#          sshpass -p "${{ inputs.cdn77-pwd }}" rsync -vaP --stats -e ssh ${{ inputs.edition }} \
+#            ${{ inputs.cdn77-user }}@${{ inputs.cdn77-host }}:/www/
+#          # upload
+#          sshpass -p "${{ inputs.cdn77-pwd }}" rsync -vaP \
+#            --stats -e ssh ${{ steps.upload-prepare.outputs.upload-files }} \
+#            ${{ inputs.cdn77-user }}@${{ inputs.cdn77-host }}:/www/${{ inputs.edition }}/${{ inputs.version }}/
+#
