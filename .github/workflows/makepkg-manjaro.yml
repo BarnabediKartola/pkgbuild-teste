@@ -14,12 +14,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
       - name: 'Manjaro Package Action'
         description: 'Builds Manjaro Packages'
-        users:
+
         inputs:
           package:
             description: 'PKGBUILD repo name'
