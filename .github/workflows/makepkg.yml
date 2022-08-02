@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "## github upload"
           echo ${{ github.token }} | gh auth login --with-token
-          gh release create criar --title titulo --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
+          gh release create ${{ steps.makepkg.outputs.pkgfile0 }} --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
           GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.makepkg.outputs.pkgfile0 }}
           gh release upload ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --clobber \
             ${{ steps.upload-prepare.outputs.upload-files }}
