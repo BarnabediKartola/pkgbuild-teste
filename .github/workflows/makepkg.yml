@@ -32,7 +32,7 @@ jobs:
         uses: edlanglois/pkgbuild-action@v1.1.7
         with:
           # Relative path to directory containing the PKGBUILD file.
-          pkgdir: # optional, default is .
+          pkgdir: .github # optional, default is .
           # Support AUR dependencies if nonempty.
           aurDeps: # optional, default is 
           # Disable namcap checks if nonempty.
