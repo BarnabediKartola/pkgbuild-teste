@@ -57,6 +57,7 @@ jobs:
           ssh-agent -a /tmp/ssh_agent.sock > /dev/null
           echo "::set-output name=upload-files::./mystiq-20.03.23-3-x86_64.pkg.tar.zst"
           #mkdir -p ${{ inputs.edition }}/${{ inputs.version }}
+          #
     
       - id: upload-github-release
         shell: bash -O extglob {0}
