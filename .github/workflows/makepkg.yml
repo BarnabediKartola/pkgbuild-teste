@@ -3,16 +3,7 @@
 name: Makepkg
 
 # Controls when the workflow will run
-on: 
-  push:
-    #branches: [ "main" ]
-    branches: [ "master" ]
-  pull_request:
-    #branches: [ "main" ]
-    branches: [ "master" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+on: on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -79,6 +70,10 @@ jobs:
           gh release upload $pkgname --repo ${{ github.repository }} --clobber \
             ${{ steps.upload-prepare.outputs.upload-files }}
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
+        
 #      - name: upload-cdn77
 #        shell: bash -O extglob {0}
 #        run: |
