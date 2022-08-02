@@ -66,12 +66,12 @@ jobs:
           ssh-agent -a /tmp/ssh_agent.sock > /dev/null
           echo "::set-output name=upload-files::./${{ steps.makepkg.outputs.pkgfile0 }}"
     
-      - id: upload-github-release
+      - name: upload-github-release
         shell: bash -O extglob {0}
         run: |
           echo "## github upload"
           echo ${{ github.token }} | gh auth login --with-token
-          gh release create ${{ mystiq-20.03.23-3-x86_64.pkg.tar.zst }} --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
+          gh release create mystiq-20.03.23-3-x86_64.pkg.tar.zst --title ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --notes "automated release" || echo "release already exists"
           GITHUB_LINK=https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.makepkg.outputs.pkgfile0 }}
           gh release upload ${{ steps.makepkg.outputs.pkgfile0 }} --repo ${{ github.repository }} --clobber \
             ${{ steps.upload-prepare.outputs.upload-files }}
