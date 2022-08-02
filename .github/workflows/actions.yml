@@ -1,6 +1,8 @@
 name: 'Manjaro Kernel Action'
 description: 'Builds Manjaro Kernels'
 
+on: [push, pull_request]
+
 inputs:
   gitlab-pw:
     description: 'gitlab password'
