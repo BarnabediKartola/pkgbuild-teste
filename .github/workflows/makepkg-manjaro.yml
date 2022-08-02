@@ -19,7 +19,7 @@ jobs:
 
       - name: 'Manjaro Kernel Action'
         description: 'Builds Manjaro Kernels'
-        
+        run:
         inputs:
           gitlab-pw:
             description: 'gitlab password'
