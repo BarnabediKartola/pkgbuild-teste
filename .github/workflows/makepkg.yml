@@ -55,8 +55,7 @@ jobs:
         #with:
           #path: ${{ steps.makepkg.outputs.pkgfile0 }}
     
-      - name: upload-prepare
-        id: upload-prepare
+      - id: upload-prepare
         shell: bash -O extglob {0}
         run: |
           echo "## ssh setup"
@@ -66,7 +65,7 @@ jobs:
           ssh-agent -a /tmp/ssh_agent.sock > /dev/null
           echo "::set-output name=upload-files::./${{ steps.makepkg.outputs.pkgfile0 }}"
     
-      - name: upload-github-release
+      - id: upload-github-release
         shell: bash -O extglob {0}
         run: |
           echo "## github upload"
